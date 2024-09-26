@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class ButtonComponent extends StatelessWidget {
   final Function()? onPressed;
+  final double? width;
   //final VoidCallBack? onPress;
   final double borderSize;
   final Color? color;
@@ -18,6 +19,7 @@ class ButtonComponent extends StatelessWidget {
     this.border,
     this.borderRadius,
     this.child,
+    this.width,
   });
 
   @override
@@ -27,7 +29,7 @@ class ButtonComponent extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         child: Container(
-          width: double.infinity,
+          width: width,
           decoration: BoxDecoration(
               color: color,
               border: border,
