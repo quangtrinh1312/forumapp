@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:forum_app/components/button_component.dart';
 import 'package:forum_app/components/text_field_component.dart';
+import 'package:forum_app/controller/authentication.dart';
 import 'package:forum_app/pages/register_page.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthenticationController _authenticationController =
+      Get.put(AuthenticationController());
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -44,21 +48,52 @@ class _LoginPageState extends State<LoginPage> {
             height: spaceBetwenComponents,
           ),
           ButtonComponent(
-            onPressed: () {},
-            text: 'Login',
+            onPressed: () async {
+              dynamic response = await widget._authenticationController.login(
+                username: widget._usernameController.text.trim(),
+                password: widget._passwordController.text.trim(),
+              );
+              String message = response.toString();
+              if (!mounted) return;
+              SnackBar snackBar = SnackBar(
+                content: Text(
+                  message,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.red,
+                showCloseIcon: true,
+                closeIconColor: Colors.white,
+                dismissDirection: DismissDirection.up,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 70,
+                    left: 10,
+                    right: 10),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            },
             color: Colors.black,
             textColor: Colors.white,
+            child: widget._authenticationController.isLoading.value
+                ? const CircularProgressIndicator()
+                : Text(
+                    'Login',
+                    style: GoogleFonts.poppins(color: Colors.white),
+                  ),
           ),
           ButtonComponent(
             onPressed: () {
               Route route = MaterialPageRoute(
-                builder: (context) =>RegisterPage(),
+                builder: (context) => RegisterPage(),
               );
               Navigator.push(context, route);
             },
-            text: 'Sign up',
             color: Colors.transparent,
             textColor: Colors.black,
+            child: const Text('Sign up'),
           )
         ],
       ),

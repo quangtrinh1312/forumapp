@@ -76,44 +76,58 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(
             height: spaceBetwenComponents,
           ),
-          Obx(() {
-            return widget._authenticationController.isLoading.value
-                ? const CircularProgressIndicator()
-                : ButtonComponent(
-                    onPressed: () async {
-                      dynamic message;
-                      if (widget._passwordController.text.trim() ==
-                          widget._rePasswordController.text.trim()) {
-                        message = await widget._authenticationController.register(
-                          name: widget._nameController.text.trim(),
-                          username: widget._usernameController.text.trim(),
-                          email: widget._emailController.text.trim(),
-                          password: widget._passwordController.text.trim(),
-                        );
-                          SnackBar snackBar = SnackBar(content: Text(message.toString()));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        ;
-                      } else {
-                        SnackBar snackBar = const SnackBar(
-                            content: Text('Password is missmatch!'));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                      // Navigator.pop(
-                      //   context,
-                      // );
-                    },
-                    text: 'Sign up',
-                    color: Colors.black,
-                    textColor: Colors.white,
-                  );
-          }),
+          ButtonComponent(
+            onPressed: () async {
+              dynamic response = await widget._authenticationController.register(
+                name: widget._nameController.text.trim(),
+                username: widget._usernameController.text.trim(),
+                email: widget._emailController.text.trim(),
+                password: widget._passwordController.text.trim(),
+              );
+              String message = response.toString();
+              if (!mounted) return;
+              SnackBar snackBar = SnackBar(
+                content: Text(
+                  message,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.red,
+                showCloseIcon: true,
+                closeIconColor: Colors.white,
+                dismissDirection: DismissDirection.up,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 70,
+                    left: 10,
+                    right: 10),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            },
+            color: Colors.black,
+            textColor: Colors.white,
+            child: Obx(() {
+              return widget._authenticationController.isLoading.value
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : Text(
+                      'Register',
+                      style: GoogleFonts.poppins(
+                        fontSize: size * 0.040,
+                      ),
+                    );
+            }),
+          ),
           ButtonComponent(
             onPressed: () {
               Navigator.pop(context);
             },
-            text: 'Back',
             color: Colors.transparent,
             textColor: Colors.black,
+            child: const Text('Back'),
           )
         ],
       ),
